@@ -80,7 +80,8 @@ export const useAppStore = create<AppState>()(
       setI18nLanguage(lang);
     },
     setBackgroundImage: (path) => set({ backgroundImage: path }),
-    setBackgroundOpacity: (opacity) => set({ backgroundOpacity: Math.max(0, Math.min(100, opacity)) }),
+    setBackgroundOpacity: (opacity) =>
+      set({ backgroundOpacity: Math.max(0, Math.min(100, opacity)) }),
     setConfirmBeforeDelete: (enabled) => set({ confirmBeforeDelete: enabled }),
     setMaxLogsPerInstance: (value) =>
       set({

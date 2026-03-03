@@ -73,7 +73,9 @@ function App() {
   const [showVCRedistModal, setShowVCRedistModal] = useState(false);
   const [showBadPathModal, setShowBadPathModal] = useState(false);
   const [badPathType, setBadPathType] = useState<BadPathType>('root');
-  const [backgroundImageDataUrl, setBackgroundImageDataUrl] = useState<string | undefined>(undefined);
+  const [backgroundImageDataUrl, setBackgroundImageDataUrl] = useState<string | undefined>(
+    undefined,
+  );
   const blobUrlRef = useRef<string | undefined>(undefined);
 
   // 页面过渡状态
@@ -1107,29 +1109,31 @@ function App() {
   // 设置页面
   if (currentPage === 'settings') {
     return (
-      <div className={`h-full flex flex-col bg-bg-primary relative ${backgroundImageDataUrl ? 'has-background-image' : ''}`}>
+      <div
+        className={`h-full flex flex-col bg-bg-primary relative ${backgroundImageDataUrl ? 'has-background-image' : ''}`}
+      >
         <BackgroundOverlay imageDataUrl={backgroundImageDataUrl} opacity={backgroundOpacity} />
         <div className="relative z-10 h-full flex flex-col">
-        <TitleBar />
-        {/* 安装确认模态框 - 在设置页面也需要能弹出 */}
-        <InstallConfirmModal />
-        <div
-          key="settings-page"
-          className={`flex-1 min-h-0 flex flex-col ${isSettingsExiting ? 'page-slide-right-exit' : 'page-slide-right-enter'}`}
-        >
-          <SettingsPage onClose={closeSettingsWithAnimation} />
-        </div>
-        {/*
+          <TitleBar />
+          {/* 安装确认模态框 - 在设置页面也需要能弹出 */}
+          <InstallConfirmModal />
+          <div
+            key="settings-page"
+            className={`flex-1 min-h-0 flex flex-col ${isSettingsExiting ? 'page-slide-right-exit' : 'page-slide-right-enter'}`}
+          >
+            <SettingsPage onClose={closeSettingsWithAnimation} />
+          </div>
+          {/*
           让全局快捷键（开始/结束任务）在设置页也能触发：
           Toolbar 内部监听 mxu-start-tasks / mxu-stop-tasks 并复用既有启动/停止逻辑。
           这里不显示 Toolbar，仅用于挂载快捷键处理逻辑。
         */}
-        <div className="hidden">
-          <Toolbar
-            showAddPanel={showAddTaskPanel}
-            onToggleAddPanel={() => setShowAddTaskPanel(!showAddTaskPanel)}
-          />
-        </div>
+          <div className="hidden">
+            <Toolbar
+              showAddPanel={showAddTaskPanel}
+              onToggleAddPanel={() => setShowAddTaskPanel(!showAddTaskPanel)}
+            />
+          </div>
         </div>
       </div>
     );
@@ -1179,116 +1183,118 @@ function App() {
 
   // 主页面
   return (
-    <div className={`h-full flex flex-col bg-bg-primary relative ${backgroundImageDataUrl ? 'has-background-image' : ''}`}>
+    <div
+      className={`h-full flex flex-col bg-bg-primary relative ${backgroundImageDataUrl ? 'has-background-image' : ''}`}
+    >
       <BackgroundOverlay imageDataUrl={backgroundImageDataUrl} opacity={backgroundOpacity} />
       <div className="relative z-10 h-full flex flex-col">
-      {/* 自定义标题栏 */}
-      <TitleBar />
+        {/* 自定义标题栏 */}
+        <TitleBar />
 
-      {/* 欢迎弹窗 */}
-      <WelcomeDialog />
+        {/* 欢迎弹窗 */}
+        <WelcomeDialog />
 
-      {/* 新用户引导覆盖层 - 仅在右侧面板可见时显示 */}
-      {!rightPanelCollapsed && !dashboardView && <OnboardingOverlay />}
+        {/* 新用户引导覆盖层 - 仅在右侧面板可见时显示 */}
+        {!rightPanelCollapsed && !dashboardView && <OnboardingOverlay />}
 
-      {/* 安装确认模态框 */}
-      <InstallConfirmModal />
+        {/* 安装确认模态框 */}
+        <InstallConfirmModal />
 
-      {/* VC++ 运行库缺失提示模态框 */}
-      <VCRedistModal show={showVCRedistModal} onClose={() => setShowVCRedistModal(false)} />
+        {/* VC++ 运行库缺失提示模态框 */}
+        <VCRedistModal show={showVCRedistModal} onClose={() => setShowVCRedistModal(false)} />
 
-      {/* 程序路径问题提示模态框 */}
-      <BadPathModal show={showBadPathModal} type={badPathType} />
+        {/* 程序路径问题提示模态框 */}
+        <BadPathModal show={showBadPathModal} type={badPathType} />
 
-      {/* MaaFramework 版本警告弹窗 */}
-      {versionWarning && (
-        <VersionWarningModal
-          current={versionWarning.current}
-          minimum={versionWarning.minimum}
-          onClose={() => setVersionWarning(null)}
-        />
-      )}
+        {/* MaaFramework 版本警告弹窗 */}
+        {versionWarning && (
+          <VersionWarningModal
+            current={versionWarning.current}
+            minimum={versionWarning.minimum}
+            onClose={() => setVersionWarning(null)}
+          />
+        )}
 
-      {/* 顶部标签栏 */}
-      <TabBar />
+        {/* 顶部标签栏 */}
+        <TabBar />
 
-      {/* 中控台视图 */}
-      {dashboardView ? (
-        <div
-          key="dashboard-view"
-          className={`flex-1 min-h-0 ${isDashboardExiting ? 'page-slide-top-exit' : 'page-slide-top-enter'}`}
-        >
-          <DashboardView onClose={closeDashboardWithAnimation} />
-        </div>
-      ) : (
-        /* 主内容区 */
-        <div key="main-view" className="flex-1 flex overflow-hidden">
-          {/* 左侧任务列表区 */}
+        {/* 中控台视图 */}
+        {dashboardView ? (
           <div
-            className="flex-1 flex flex-col border-r border-border"
-            style={{ minWidth: MIN_LEFT_PANEL_WIDTH }}
+            key="dashboard-view"
+            className={`flex-1 min-h-0 ${isDashboardExiting ? 'page-slide-top-exit' : 'page-slide-top-enter'}`}
           >
-            {/* 任务列表 */}
-            <TaskList />
-
-            {/* 添加任务面板 - 使用 grid 动画实现平滑展开/折叠 */}
-            <div
-              className="grid transition-[grid-template-rows] duration-150 ease-out"
-              style={{ gridTemplateRows: showAddTaskPanel ? '1fr' : '0fr' }}
-            >
-              <div className="overflow-hidden min-h-0">
-                <AddTaskPanel />
-              </div>
-            </div>
-
-            {/* 底部工具栏 */}
-            <Toolbar
-              showAddPanel={showAddTaskPanel}
-              onToggleAddPanel={() => setShowAddTaskPanel(!showAddTaskPanel)}
-            />
+            <DashboardView onClose={closeDashboardWithAnimation} />
           </div>
-
-          {/* 分隔条 Resizer */}
-          <div
-            className={`${rightPanelCollapsed ? 'w-4' : 'w-1'} hover:bg-accent/50 cursor-col-resize flex items-center justify-center group shrink-0 transition-all select-none bg-transparent`}
-            onMouseDown={handleResizeStart}
-            title={t('common.resizeOrCollapse', '拖动调整宽度，向右拖动到底可折叠')}
-          >
-            {/* 可视化把手 */}
-            <div className="w-[2px] h-8 rounded-full transition-colors bg-border group-hover:bg-accent" />
-          </div>
-
-          {/* 右侧信息面板 */}
-          {!rightPanelCollapsed && (
+        ) : (
+          /* 主内容区 */
+          <div key="main-view" className="flex-1 flex overflow-hidden">
+            {/* 左侧任务列表区 */}
             <div
-              className={`flex flex-col p-3 bg-bg-primary overflow-x-hidden border-l border-transparent ${sidePanelExpanded ? 'gap-3 overflow-y-auto' : 'overflow-hidden'}`}
-              style={{
-                width: rightPanelWidth,
-                minWidth: 240,
-                // 允许收缩但保持最小宽度，确保窗口缩小时不被裁切
-                flexShrink: 1,
-              }}
+              className="flex-1 flex flex-col border-r border-border"
+              style={{ minWidth: MIN_LEFT_PANEL_WIDTH }}
             >
-              {/* 连接设置和实时截图（可折叠）- 使用 grid 动画 */}
+              {/* 任务列表 */}
+              <TaskList />
+
+              {/* 添加任务面板 - 使用 grid 动画实现平滑展开/折叠 */}
               <div
                 className="grid transition-[grid-template-rows] duration-150 ease-out"
-                style={{ gridTemplateRows: sidePanelExpanded ? '1fr' : '0fr' }}
+                style={{ gridTemplateRows: showAddTaskPanel ? '1fr' : '0fr' }}
               >
-                <div className="overflow-hidden min-h-0 flex flex-col gap-3">
-                  {/* 连接设置（设备/资源选择） */}
-                  <ConnectionPanel />
-
-                  {/* 实时截图 */}
-                  <ScreenshotPanel />
+                <div className="overflow-hidden min-h-0">
+                  <AddTaskPanel />
                 </div>
               </div>
 
-              {/* 运行日志 */}
-              <LogsPanel />
+              {/* 底部工具栏 */}
+              <Toolbar
+                showAddPanel={showAddTaskPanel}
+                onToggleAddPanel={() => setShowAddTaskPanel(!showAddTaskPanel)}
+              />
             </div>
-          )}
-        </div>
-      )}
+
+            {/* 分隔条 Resizer */}
+            <div
+              className={`${rightPanelCollapsed ? 'w-4' : 'w-1'} hover:bg-accent/50 cursor-col-resize flex items-center justify-center group shrink-0 transition-all select-none bg-transparent`}
+              onMouseDown={handleResizeStart}
+              title={t('common.resizeOrCollapse', '拖动调整宽度，向右拖动到底可折叠')}
+            >
+              {/* 可视化把手 */}
+              <div className="w-[2px] h-8 rounded-full transition-colors bg-border group-hover:bg-accent" />
+            </div>
+
+            {/* 右侧信息面板 */}
+            {!rightPanelCollapsed && (
+              <div
+                className={`flex flex-col p-3 bg-bg-primary overflow-x-hidden border-l border-transparent ${sidePanelExpanded ? 'gap-3 overflow-y-auto' : 'overflow-hidden'}`}
+                style={{
+                  width: rightPanelWidth,
+                  minWidth: 240,
+                  // 允许收缩但保持最小宽度，确保窗口缩小时不被裁切
+                  flexShrink: 1,
+                }}
+              >
+                {/* 连接设置和实时截图（可折叠）- 使用 grid 动画 */}
+                <div
+                  className="grid transition-[grid-template-rows] duration-150 ease-out"
+                  style={{ gridTemplateRows: sidePanelExpanded ? '1fr' : '0fr' }}
+                >
+                  <div className="overflow-hidden min-h-0 flex flex-col gap-3">
+                    {/* 连接设置（设备/资源选择） */}
+                    <ConnectionPanel />
+
+                    {/* 实时截图 */}
+                    <ScreenshotPanel />
+                  </div>
+                </div>
+
+                {/* 运行日志 */}
+                <LogsPanel />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

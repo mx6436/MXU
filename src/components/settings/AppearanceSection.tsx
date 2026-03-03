@@ -250,7 +250,9 @@ export function AppearanceSection({
           {backgroundImage && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-text-secondary">{t('settings.backgroundOpacity')}</span>
+                <span className="text-sm text-text-secondary">
+                  {t('settings.backgroundOpacity')}
+                </span>
                 <span className="text-sm text-text-primary font-medium">{backgroundOpacity}%</span>
               </div>
               <input

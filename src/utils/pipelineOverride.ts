@@ -89,7 +89,14 @@ const collectOptionOverrides = (
 
     if (caseDef?.option) {
       for (const nestedKey of caseDef.option) {
-        collectOptionOverrides(nestedKey, optionValues, overrides, allOptions, controllerName, resourceName);
+        collectOptionOverrides(
+          nestedKey,
+          optionValues,
+          overrides,
+          allOptions,
+          controllerName,
+          resourceName,
+        );
       }
     }
   } else if (
