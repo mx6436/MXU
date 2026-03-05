@@ -1,8 +1,34 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { driver, type DriveStep, type Driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
 import { useAppStore } from '@/stores/appStore';
+import { loggers } from '@/utils/logger';
+import type {
+  Driver as DriverInstance,
+  DriverConfig as DriverFactoryOptions,
+  DriverStep as DriveStep,
+} from 'driver.js';
+
+type DriverFactory = (options: DriverFactoryOptions) => DriverInstance;
+
+let driverFactoryPromise: Promise<DriverFactory> | null = null;
+const log = loggers.app;
+
+async function loadDriverFactory(): Promise<DriverFactory> {
+  if (!driverFactoryPromise) {
+    driverFactoryPromise = (async () => {
+      try {
+        await import('driver.js/dist/driver.css');
+        const module = await import('driver.js');
+        return module.driver;
+      } catch (error) {
+        // 动态导入临时失败时允许后续重试
+        driverFactoryPromise = null;
+        throw error;
+      }
+    })();
+  }
+  return driverFactoryPromise;
+}
 
 /**
  * 检查当前是否有任何模态弹窗（z-50 级别的 fixed 遮罩）正在显示。
@@ -31,14 +57,14 @@ export function OnboardingOverlay() {
     activeInstanceId,
   } = useAppStore();
 
-  const driverRef = useRef<Driver | null>(null);
+  const driverRef = useRef<DriverInstance | null>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedRef = useRef(false);
   // 只有用户点击最后一步的"知道了"才视为完成；中途关闭下次启动仍提示
   const tourFinishedRef = useRef(false);
 
   // 启动 driver.js 引导
-  const startTour = useCallback(() => {
+  const startTour = useCallback(async () => {
     if (startedRef.current || onboardingCompleted) return;
 
     const element = document.getElementById('connection-panel');
@@ -92,27 +118,33 @@ export function OnboardingOverlay() {
       },
     ];
 
-    const driverInstance = driver({
-      steps,
-      animate: true,
-      overlayColor: 'black',
-      overlayOpacity: 0.4,
-      stagePadding: 6,
-      stageRadius: 8,
-      allowClose: true,
-      popoverClass: 'mxu-onboarding-popover',
-      onDestroyed: () => {
-        if (tourFinishedRef.current) {
-          setOnboardingCompleted(true);
-        } else {
-          // 用户中途关闭，重置 startedRef 以便下次启动重新触发
-          startedRef.current = false;
-        }
-      },
-    });
+    try {
+      const createDriver = await loadDriverFactory();
+      const driverInstance = createDriver({
+        steps,
+        animate: true,
+        overlayColor: 'black',
+        overlayOpacity: 0.4,
+        stagePadding: 6,
+        stageRadius: 8,
+        allowClose: true,
+        popoverClass: 'mxu-onboarding-popover',
+        onDestroyed: () => {
+          if (tourFinishedRef.current) {
+            setOnboardingCompleted(true);
+          } else {
+            // 用户中途关闭，重置 startedRef 以便下次启动重新触发
+            startedRef.current = false;
+          }
+        },
+      });
 
-    driverRef.current = driverInstance;
-    driverInstance.drive();
+      driverRef.current = driverInstance;
+      driverInstance.drive();
+    } catch (err) {
+      startedRef.current = false;
+      log.warn('Failed to load onboarding driver:', err);
+    }
   }, [onboardingCompleted, t, setOnboardingCompleted, setShowAddTaskPanel]);
 
   // 监听连接状态，一旦用户成功连接设备并加载资源，自动关闭引导
@@ -145,7 +177,7 @@ export function OnboardingOverlay() {
     const initialDelay = setTimeout(() => {
       // 如果此时没有模态弹窗，直接启动
       if (!hasActiveModal()) {
-        startTour();
+        void startTour();
         return;
       }
 
@@ -158,7 +190,7 @@ export function OnboardingOverlay() {
           }
           // 模态弹窗关闭后再延迟一小段时间，让退出动画完成
           setTimeout(() => {
-            startTour();
+            void startTour();
           }, 300);
         }
       }, 200);
