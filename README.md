@@ -4,9 +4,9 @@
 
 它可以解析任何符合 PI V2 标准的 `interface.json` 文件，为 MaaFramework 生态中的自动化项目提供开箱即用的图形界面。
 
-> [!TIPS]
+> [!TIP]
 >
-> MXU 已支持至最新最潮的 PI v2.4.0 协议！
+> MXU 已支持最新最潮的 PI v2.4.0 协议！
 
 ## ✨ 特性
 
