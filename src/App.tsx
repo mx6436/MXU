@@ -131,6 +131,7 @@ function App() {
     setInterfaceTranslations,
     setBasePath,
     setDataPath,
+    setConfigPersistenceReady,
     basePath,
     importConfig,
     createInstance,
@@ -462,6 +463,8 @@ function App() {
 
   // 加载 interface.json 和配置文件
   const loadInterface = async () => {
+    // 加载期间先禁止自动持久化，避免空状态误写回配置文件
+    setConfigPersistenceReady(false);
     setLoadingState('loading');
     setErrorMessage('');
 
@@ -567,6 +570,8 @@ function App() {
 
       log.info('加载完成, 项目:', result.interface.name);
       setLoadingState('success');
+      // 完成配置加载后，允许后续状态变更自动保存
+      setConfigPersistenceReady(true);
 
       // 检查是否缺少 VC++ 运行库
       checkVCRedistMissing();
@@ -751,6 +756,8 @@ function App() {
       log.error('加载 interface.json 失败:', err);
       setErrorMessage(err instanceof Error ? err.message : '加载失败');
       setLoadingState('error');
+      // 加载失败时保持禁用自动持久化，防止错误状态覆盖用户配置
+      setConfigPersistenceReady(false);
     }
   };
 
