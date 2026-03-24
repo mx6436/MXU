@@ -13,10 +13,7 @@ export interface PiEnvContext {
 /**
  * 仅解析 `$` 开头的 i18n key，保留普通字符串字段原值不变。
  */
-function resolvePiI18nText(
-  text: string,
-  translations?: Record<string, string>,
-): string {
+function resolvePiI18nText(text: string, translations?: Record<string, string>): string {
   if (!text.startsWith('$')) {
     return text;
   }
@@ -25,10 +22,7 @@ function resolvePiI18nText(
   return translations?.[key] ?? key;
 }
 
-function resolveI18nValue(
-  value: unknown,
-  translations?: Record<string, string>,
-): unknown {
+function resolveI18nValue(value: unknown, translations?: Record<string, string>): unknown {
   if (typeof value === 'string') {
     return resolvePiI18nText(value, translations);
   }
@@ -68,8 +62,7 @@ export function buildPiEnvVars(context: PiEnvContext): Record<string, string> {
 
   envs.PI_INTERFACE_VERSION = 'v2.5.0';
   envs.PI_CLIENT_NAME = 'MXU';
-  envs.PI_CLIENT_VERSION =
-    typeof __MXU_VERSION__ !== 'undefined' ? __MXU_VERSION__ : 'unknown';
+  envs.PI_CLIENT_VERSION = typeof __MXU_VERSION__ !== 'undefined' ? __MXU_VERSION__ : 'unknown';
   envs.PI_CLIENT_LANGUAGE = getInterfaceLangKey(language);
 
   if (maaVersion) {
