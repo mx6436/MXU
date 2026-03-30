@@ -341,12 +341,38 @@ pub fn check_exe_path() -> Option<String> {
         "/appdata/local/temp",
         // Windows 压缩包临时解压目录
         "\\temporary internet files\\",
+        // 7-Zip 临时目录
         "\\7zocab",
         "\\7zo",
-        // 一些压缩软件的临时目录
-        "\\wz",
+        // WinRAR 临时目录
         "\\rar$",
+        // WinZip 临时目录
+        "\\wz",
+        // 360压缩临时目录
+        "\\360zip$",
+        "\\360zip_tmp",
+        "\\360xtract",
+        // 2345好压临时目录
+        "\\2345zip",
+        "\\haozip$",
+        // 快压临时目录
+        "\\kuaizip$",
+        // Bandizip 临时目录
+        "\\bztmp",
+        "\\bandizip$",
+        // 百度网盘下载临时目录
+        "\\baiduyundownload",
+        "\\baidupcs",
+        // 迅雷下载临时目录
+        "\\thundernetwork",
+        "\\xunlei\\downloads\\.tmp",
+        // QQ/微信 文件临时目录
+        "\\tencent\\qq\\temp",
+        "\\tencent files\\",
+        "\\weixin files\\",
+        // 通用临时目录特征
         "\\temp_",
+        "\\.tmp\\",
     ];
 
     for indicator in &temp_indicators {
