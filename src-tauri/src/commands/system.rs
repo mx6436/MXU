@@ -532,6 +532,45 @@ pub fn is_autostart() -> bool {
     std::env::args().any(|arg| arg == "--autostart")
 }
 
+/// 从命令行参数中获取指定选项的值
+/// 支持 `-x value`、`--name value`、`-x=value`、`--name=value` 格式
+/// 返回第一个匹配的值；若值缺失或以 `-` 开头则视为无效并跳过
+fn get_cli_arg_value(short: &str, long: &str) -> Option<String> {
+    let short_eq = format!("{}=", short);
+    let long_eq = format!("{}=", long);
+    let args: Vec<String> = std::env::args().collect();
+    let mut iter = args.iter();
+    while let Some(arg) = iter.next() {
+        if arg == short || arg == long {
+            if let Some(value) = iter.next() {
+                if !value.starts_with('-') {
+                    return Some(value.clone());
+                }
+            }
+            return None;
+        }
+        if let Some(value) = arg.strip_prefix(&short_eq) {
+            return Some(value.to_string());
+        }
+        if let Some(value) = arg.strip_prefix(&long_eq) {
+            return Some(value.to_string());
+        }
+    }
+    None
+}
+
+/// 获取命令行 -i/--instance 参数指定的启动实例名称
+#[tauri::command]
+pub fn get_start_instance() -> Option<String> {
+    get_cli_arg_value("-i", "--instance")
+}
+
+/// 检查命令行是否包含 -q/--quit-after-run 参数（任务完成后关闭自身）
+#[tauri::command]
+pub fn has_quit_after_run_flag() -> bool {
+    std::env::args().any(|arg| arg == "-q" || arg == "--quit-after-run")
+}
+
 /// 自动迁移旧版注册表自启动到任务计划程序
 #[cfg(windows)]
 pub fn migrate_legacy_autostart() {
