@@ -530,14 +530,14 @@ export function TaskItem({ instanceId, task }: TaskItemProps) {
     return () => element.removeEventListener('animationend', handleAnimationEnd);
   }, [isAnimating, task.id, removeAnimatingTaskId]);
 
-  if (!taskDef) return null;
-
   // 对于 MXU 内置任务，使用 t() 翻译，否则使用 resolveI18nText
-  const originalLabel = isMxuTask
-    ? t(taskDef.label || taskDef.name)
-    : resolveI18nText(taskDef.label, langKey) || taskDef.name;
+  const originalLabel = taskDef
+    ? isMxuTask
+      ? t(taskDef.label || taskDef.name)
+      : resolveI18nText(taskDef.label, langKey) || taskDef.name
+    : '';
   const displayName = task.customName || originalLabel;
-  const hasOptions = taskDef.option && taskDef.option.length > 0;
+  const hasOptions = !!taskDef?.option && taskDef.option.length > 0;
   // 判断是否有描述内容（包括正在加载的情况）
   const hasDescription = !!resolvedDescription.html || resolvedDescription.loading;
   // 有选项或有描述时都可以展开
@@ -630,7 +630,7 @@ export function TaskItem({ instanceId, task }: TaskItemProps) {
   }, [
     hasOptions,
     projectInterface?.option,
-    taskDef.option,
+    taskDef?.option,
     task.optionValues,
     langKey,
     resolveI18nText,
@@ -781,6 +781,8 @@ export function TaskItem({ instanceId, task }: TaskItemProps) {
       canDelete,
     ],
   );
+
+  if (!taskDef) return null;
 
   // 状态指示器颜色
   const getStatusIndicatorClass = (): string => {
