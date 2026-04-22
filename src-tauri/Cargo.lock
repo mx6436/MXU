@@ -2460,8 +2460,9 @@ dependencies = [
 
 [[package]]
 name = "maa-framework"
-version = "1.15.0"
-source = "git+https://github.com/MaaXYZ/maa-framework-rs.git?branch=main#bf5952c74025910b3b48b547a08b5c5c55d4080d"
+version = "1.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19730799faa08dd0dcd7468ed9757f51bcb4f852233279dd374b8ee5a9236bc8"
 dependencies = [
  "bitflags 2.10.0",
  "maa-framework-sys",
@@ -2473,7 +2474,8 @@ dependencies = [
 [[package]]
 name = "maa-framework-sys"
 version = "5.10.2"
-source = "git+https://github.com/MaaXYZ/maa-framework-rs.git?branch=main#bf5952c74025910b3b48b547a08b5c5c55d4080d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "557158daf1123352220cbba03259be36017ec0796c1a3cd54a5da9f577c9e70e"
 dependencies = [
  "libloading 0.8.9",
  "once_cell",
